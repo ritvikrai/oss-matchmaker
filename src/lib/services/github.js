@@ -85,8 +85,13 @@ export async function getGoodFirstIssues(owner, repo) {
   const url = `${GITHUB_API}/search/issues?q=repo:${owner}/${repo}+is:issue+is:open+(${labelQuery})&per_page=10`;
   
   const response = await fetch(url, { headers: getHeaders() });
+
+  if (!response.ok) {
+    throw new Error(`GitHub API error: ${response.status}`);
+  }
+
   const data = await response.json();
-  
+
   return (data.items || []).map(issue => ({
     id: issue.id,
     number: issue.number,
